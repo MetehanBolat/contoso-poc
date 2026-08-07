@@ -11,8 +11,8 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.81.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
 
 ## Modules
 
@@ -22,6 +22,7 @@
 | <a name="module_app_service"></a> [app\_service](#module\_app\_service) | Azure/avm-res-web-site/azurerm | 0.22.0 |
 | <a name="module_asp"></a> [asp](#module\_asp) | Azure/avm-res-web-serverfarm/azurerm | 2.0.8 |
 | <a name="module_kv"></a> [kv](#module\_kv) | Azure/avm-res-keyvault-vault/azurerm | 0.10.2 |
+| <a name="module_laws"></a> [laws](#module\_laws) | Azure/avm-res-operationalinsights-workspace/azurerm | 0.5.1 |
 | <a name="module_nsg"></a> [nsg](#module\_nsg) | Azure/avm-res-network-networksecuritygroup/azurerm | 0.5.1 |
 | <a name="module_psql"></a> [psql](#module\_psql) | Azure/avm-res-dbforpostgresql-flexibleserver/azurerm | 0.2.3 |
 | <a name="module_vnet"></a> [vnet](#module\_vnet) | Azure/avm-res-network-virtualnetwork/azurerm | 0.19.0 |
@@ -30,12 +31,14 @@
 
 | Name | Type |
 | ---- | ---- |
-| [azurerm_log_analytics_workspace.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/log_analytics_workspace) | resource |
+| [azurerm_application_insights.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_insights) | resource |
 | [azurerm_private_dns_zone.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
+| [azurerm_private_dns_zone.log_analytics](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone.psql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
+| [azurerm_private_dns_zone_virtual_network_link.log_analytics](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_private_dns_zone_virtual_network_link.psql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_user_assigned_identity.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
@@ -52,6 +55,7 @@
 | <a name="input_app_service_plan_sku_name"></a> [app\_service\_plan\_sku\_name](#input\_app\_service\_plan\_sku\_name) | The SKU name of the App Service plan. Use a consumption plan such as Y1 for the cheapest option. | `string` | n/a | yes |
 | <a name="input_app_subnet_address_space"></a> [app\_subnet\_address\_space](#input\_app\_subnet\_address\_space) | The address space for the application subnet. | `string` | n/a | yes |
 | <a name="input_app_subnet_name"></a> [app\_subnet\_name](#input\_app\_subnet\_name) | The name of the application subnet. | `string` | n/a | yes |
+| <a name="input_application_insights_name"></a> [application\_insights\_name](#input\_application\_insights\_name) | The name of the Azure Application Insights resource. | `string` | n/a | yes |
 | <a name="input_container_registry_name"></a> [container\_registry\_name](#input\_container\_registry\_name) | The name of the Azure Container Registry. | `string` | n/a | yes |
 | <a name="input_container_registry_sku"></a> [container\_registry\_sku](#input\_container\_registry\_sku) | The SKU of the Azure Container Registry. | `string` | `"Basic"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | The environment for the resources. | `string` | n/a | yes |

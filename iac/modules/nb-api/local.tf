@@ -4,7 +4,7 @@ locals {
     environment = var.environment
     location    = var.location
     managedBy   = "terraform"
-    deployedBy  = "CN-NOVABANK-POC"
+    deployedBy  = "MetehanBolat\\novabank-poc"
   })
 
   postgres_host                = "${var.postgres_server_name}.postgres.database.azure.com"

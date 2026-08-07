@@ -8,13 +8,7 @@ terraform {
     }
   }
 
-  backend "azurerm" {
-    storage_account_name = "defaultswc"
-    container_name       = "tfstate"
-    key                  = "dev/nb-api.tfstate"
-    resource_group_name  = "default-rg"
-    subscription_id      = "8486ac29-bcbd-4691-9ff6-52a901335eb0"
-  }
+  backend "azurerm" {}
 }
 
 provider "azurerm" {
@@ -23,5 +17,5 @@ provider "azurerm" {
       prevent_deletion_if_contains_resources = false
     }
   }
-  subscription_id = "8486ac29-bcbd-4691-9ff6-52a901335eb0"
+  subscription_id = var.subscription_id
 }

@@ -1,3 +1,9 @@
+variable "subscription_id" {
+  description = "The subscription ID where the resources will be created."
+  type        = string
+  #default     = "8486ac29-bcbd-4691-9ff6-52a901335eb0"
+}
+
 variable "environment" {
   description = "The environment for the resources."
   type        = string

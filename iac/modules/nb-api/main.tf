@@ -19,104 +19,6 @@ resource "azurerm_user_assigned_identity" "this" {
   })
 }
 
-module "log_analytics" {
-  source  = "Azure/avm-res-operationalinsights-workspace/azurerm"
-  version = "0.5.1"
-
-  enable_telemetry    = false
-  location            = azurerm_resource_group.this.location
-  name                = var.log_analytics_workspace_name
-  resource_group_name = azurerm_resource_group.this.name
-  tags = merge(local.tags, {
-    "service-name" = var.log_analytics_workspace_name
-  })
-
-  private_endpoints = {
-    default = {
-      subnet_resource_id            = module.vnet.subnets["subnet0"].resource_id
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.log_analytics.id]
-    }
-  }
-}
-
-resource "azurerm_application_insights" "this" {
-  name                = var.application_insights_name
-  resource_group_name = azurerm_resource_group.this.name
-  location            = azurerm_resource_group.this.location
-  application_type    = "other"
-  workspace_id        = module.log_analytics.resource.id
-  retention_in_days   = 365
-}
-
-module "nsg" {
-  source  = "Azure/avm-res-network-networksecuritygroup/azurerm"
-  version = "0.5.1"
-
-  location            = azurerm_resource_group.this.location
-  resource_group_name = azurerm_resource_group.this.name
-  enable_telemetry    = false
-  name                = var.nsg_name
-
-  diagnostic_settings = {
-    sendToLogAnalytics = {
-      name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.log_analytics.resource.id
-      log_analytics_destination_type = "Dedicated"
-    }
-  }
-
-  tags = merge(var.tags, {
-    "service-name" = var.nsg_name
-  })
-}
-
-module "vnet" {
-  source  = "Azure/avm-res-network-virtualnetwork/azurerm"
-  version = "0.19.0"
-
-  #ddos_protection_plan = {
-  #  id = azurerm_network_ddos_protection_plan.this.id
-  #  # due to resource cost
-  #  enable = false
-  #}
-
-  encryption = {
-    enabled     = true
-    enforcement = "AllowUnencrypted"
-  }
-
-  location         = azurerm_resource_group.this.location
-  parent_id        = azurerm_resource_group.this.id
-  address_space    = [var.vnet_address_space]
-  enable_telemetry = false
-  name             = var.vnet_name
-
-  subnets = {
-    subnet0 = {
-      name             = var.pe_subnet_name
-      address_prefixes = [var.pe_subnet_address_space]
-    }
-    subnet1 = {
-      name                            = var.app_subnet_name
-      address_prefixes                = [var.app_subnet_address_space]
-      default_outbound_access_enabled = false
-      delegations = [{
-        name = "Microsoft.Web.serverFarms"
-        service_delegation = {
-          name = "Microsoft.Web/serverFarms"
-        }
-      }]
-      network_security_group = {
-        id = module.nsg.resource_id
-      }
-    }
-  }
-
-  tags = merge(var.tags, {
-    "service-name" = var.vnet_name
-  })
-}
-
 module "acr" {
   source  = "Azure/avm-res-containerregistry-registry/azurerm"
   version = "0.7.0"
@@ -134,7 +36,7 @@ module "acr" {
   diagnostic_settings = {
     sendToLogAnalytics = {
       name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.log_analytics.resource.id
+      workspace_resource_id          = module.laws.resource.id
       log_analytics_destination_type = "Dedicated"
     }
   }
@@ -154,10 +56,10 @@ module "acr" {
     }
   }
 
-  private_endpoints = var.environment == "dev" ? {} : {
+  private_endpoints = {
     default = {
       subnet_resource_id            = module.vnet.subnets["subnet0"].resource_id
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.acr.id]
+      private_dns_zone_resource_ids = [module.pdns-acr.resource_id]
     }
   }
 
@@ -165,7 +67,6 @@ module "acr" {
     "service-name" = var.container_registry_name
   })
 }
-
 
 module "asp" {
   source  = "Azure/avm-res-web-serverfarm/azurerm"
@@ -177,13 +78,13 @@ module "asp" {
   os_type                = "Linux"
   parent_id              = azurerm_resource_group.this.id
   sku_name               = var.app_service_plan_sku_name
-  zone_balancing_enabled = false
+  zone_balancing_enabled = true
   worker_count           = 1
 
   diagnostic_settings = {
     sendToLogAnalytics = {
       name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.log_analytics.resource.id
+      workspace_resource_id          = module.laws.resource.id
       log_analytics_destination_type = "Dedicated"
     }
   }
@@ -205,7 +106,6 @@ module "app_service" {
   https_only                    = true
   public_network_access_enabled = var.environment == "dev" ? true : false
   virtual_network_subnet_id     = module.vnet.subnets["subnet1"].resource_id
-  key_vault_reference_identity  = azurerm_user_assigned_identity.this.id
   #vnet_route_all_traffic        = var.environment == "dev" ? false : true
 
   managed_identities = {
@@ -213,25 +113,7 @@ module "app_service" {
     user_assigned_resource_ids = [azurerm_user_assigned_identity.this.id]
   }
 
-  app_settings = {
-    WEBSITES_PORT                      = "8080"
-    DOCKER_REGISTRY_SERVER_URL         = "https://${module.acr.login_server}"
-    POSTGRES_HOST                      = local.postgres_host
-    POSTGRES_PORT                      = "5432"
-    POSTGRES_DB                        = local.postgres_database_name
-    POSTGRES_USER                      = "@Microsoft.KeyVault(SecretUri=${local.postgres_user_secret_uri})"
-    POSTGRES_PASSWORD                  = "@Microsoft.KeyVault(SecretUri=${local.postgres_password_secret_uri})"
-    POSTGRES_SSLMODE                   = "disable"
-    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
-    APPINSIGHTS_INSTRUMENTATIONKEY     = azurerm_application_insights.this.instrumentation_key
-  }
-
-  connection_strings = {
-    postgres = {
-      type  = "PostgreSQL"
-      value = "Host=${local.postgres_host};Port=5432;Database=${local.postgres_database_name};Username=@Microsoft.KeyVault(SecretUri=${local.postgres_user_secret_uri});Password=@Microsoft.KeyVault(SecretUri=${local.postgres_password_secret_uri});SslMode=Disable"
-    }
-  }
+  key_vault_reference_identity = azurerm_user_assigned_identity.this.id
 
   site_config = {
     always_on                                     = true #var.environment == "dev" ? false : true
@@ -242,6 +124,34 @@ module "app_service" {
     minimum_tls_version                           = "1.2"
     container_registry_use_managed_identity       = true
     container_registry_managed_identity_client_id = azurerm_user_assigned_identity.this.client_id
+  }
+
+  app_settings = {
+    WEBSITES_PORT                         = "8080"
+    DOCKER_REGISTRY_SERVER_URL            = "https://${module.acr.login_server}"
+    POSTGRES_HOST                         = "${var.postgres_server_name}.postgres.database.azure.com"
+    POSTGRES_PORT                         = "5432"
+    POSTGRES_DB                           = var.postgres_database_name
+    POSTGRES_USER                         = var.postgres_admin_login
+    POSTGRES_PASSWORD                     = random_password.postgres_admin.result
+    POSTGRES_SSLMODE                      = "disable"
+    APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
+    APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.this.instrumentation_key
+  }
+
+  connection_strings = {
+    postgres = {
+      type  = "PostgreSQL"
+      value = "Host=${var.postgres_server_name}.postgres.database.azure.com;Port=5432;Database=${var.postgres_database_name};Username=${var.postgres_admin_login};Password=${random_password.postgres_admin.result};SslMode=Disable"
+    }
+  }
+
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                           = "sendToLogAnalytics"
+      workspace_resource_id          = module.laws.resource.id
+      log_analytics_destination_type = "Dedicated"
+    }
   }
 
   tags = merge(local.tags, {
@@ -265,6 +175,16 @@ module "psql" {
   resource_group_name          = azurerm_resource_group.this.name
   geo_redundant_backup_enabled = var.environment == "dev" ? false : true
 
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                           = "sendToLogAnalytics"
+      workspace_resource_id          = module.laws.resource.id
+      log_analytics_destination_type = "Dedicated"
+    }
+  }
+
+  backup_retention_days = var.environment == "dev" ? 7 : 35
+
   administrator_login    = var.postgres_admin_login
   administrator_password = random_password.postgres_admin.result
 
@@ -272,13 +192,14 @@ module "psql" {
   server_version                = 16
   sku_name                      = var.postgres_server_sku
   storage_mb                    = 32768
+  auto_grow_enabled             = var.environment == "dev" ? false : true
   high_availability             = var.environment == "dev" ? null : { "mode" : "ZoneRedundant" }
   zone                          = 1
 
   private_endpoints = {
     default = {
       subnet_resource_id            = module.vnet.subnets["subnet0"].resource_id
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.psql.id]
+      private_dns_zone_resource_ids = [module.pdns-psql.resource_id]
     }
   }
 
@@ -304,7 +225,15 @@ module "kv" {
   location            = azurerm_resource_group.this.location
   name                = var.key_vault_name
 
-  enable_telemetry                = false
+  enable_telemetry = false
+
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                           = "sendToLogAnalytics"
+      workspace_resource_id          = module.laws.resource.id
+      log_analytics_destination_type = "Dedicated"
+    }
+  }
   enabled_for_deployment          = true
   enabled_for_template_deployment = true
   enabled_for_disk_encryption     = false
@@ -349,7 +278,7 @@ module "kv" {
   private_endpoints = {
     default = {
       subnet_resource_id            = module.vnet.subnets["subnet0"].resource_id
-      private_dns_zone_resource_ids = [azurerm_private_dns_zone.kv.id]
+      private_dns_zone_resource_ids = [module.pdns-kv.resource_id]
     }
   }
 

@@ -19,15 +19,15 @@ output "identity_principal_id" {
 }
 
 output "log_analytics_workspace_name" {
-  value = azurerm_log_analytics_workspace.this.name
+  value = module.laws.resource.name
 }
 
 output "log_analytics_workspace_id" {
-  value = azurerm_log_analytics_workspace.this.id
+  value = module.laws.resource.id
 }
 
 output "log_analytics_workspace_key" {
-  value     = azurerm_log_analytics_workspace.this.primary_shared_key
+  value     = module.laws.resource.primary_shared_key
   sensitive = true
 }
 
