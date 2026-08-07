@@ -47,7 +47,7 @@ module "pdns-acr" {
   domain_name         = "privatelink.azurecr.io"
   resource_group_name = azurerm_resource_group.this.name
   virtual_network_links = {
-    vnetlink0 = {
+    default = {
       vnetlinkname = "link-${var.vnet_name}-acr"
       vnetid       = module.vnet.resource_id
     }
@@ -67,8 +67,8 @@ module "pdns-laws" {
   domain_name         = "privatelink.monitor.azure.com"
   resource_group_name = azurerm_resource_group.this.name
   virtual_network_links = {
-    vnetlink0 = {
-      vnetlinkname = "dnslinktovnet"
+    default = {
+      vnetlinkname = "link-${var.vnet_name}-laws"
       vnetid       = module.vnet.resource_id
     }
   }

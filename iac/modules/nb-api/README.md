@@ -11,8 +11,8 @@
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.81.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.9.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | ~> 4.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.0 |
 
 ## Modules
 
@@ -24,6 +24,10 @@
 | <a name="module_kv"></a> [kv](#module\_kv) | Azure/avm-res-keyvault-vault/azurerm | 0.10.2 |
 | <a name="module_laws"></a> [laws](#module\_laws) | Azure/avm-res-operationalinsights-workspace/azurerm | 0.5.1 |
 | <a name="module_nsg"></a> [nsg](#module\_nsg) | Azure/avm-res-network-networksecuritygroup/azurerm | 0.5.1 |
+| <a name="module_pdns-acr"></a> [pdns-acr](#module\_pdns-acr) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
+| <a name="module_pdns-kv"></a> [pdns-kv](#module\_pdns-kv) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
+| <a name="module_pdns-laws"></a> [pdns-laws](#module\_pdns-laws) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
+| <a name="module_pdns-psql"></a> [pdns-psql](#module\_pdns-psql) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
 | <a name="module_psql"></a> [psql](#module\_psql) | Azure/avm-res-dbforpostgresql-flexibleserver/azurerm | 0.2.3 |
 | <a name="module_vnet"></a> [vnet](#module\_vnet) | Azure/avm-res-network-virtualnetwork/azurerm | 0.19.0 |
 
@@ -32,14 +36,6 @@
 | Name | Type |
 | ---- | ---- |
 | [azurerm_application_insights.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/application_insights) | resource |
-| [azurerm_private_dns_zone.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.log_analytics](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone.psql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.acr](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.kv](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.log_analytics](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
-| [azurerm_private_dns_zone_virtual_network_link.psql](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/private_dns_zone_virtual_network_link) | resource |
 | [azurerm_resource_group.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group) | resource |
 | [azurerm_user_assigned_identity.this](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
 | [random_password.postgres_admin](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |

@@ -1,0 +1,94 @@
+name: build-api-acr
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_folder:
+        description: 'Source folder for the API to build'
+        required: true
+        default: './src/api'
+        type: string
+      acr_name:
+        description: 'Azure Container Registry name'
+        required: true
+        default: 'nbapidevswcacr'
+        type: string
+      version:
+        description: 'Docker image version'
+        required: true
+        default: 'v1.0.0'
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/api/**'
+      - '.github/workflows/build-api-acr.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image to ACR
+    environment: MetehanDev
+    env:
+      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve workflow inputs
+        id: workflow_inputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_folder="${{ github.event.inputs.source_folder || './src/api' }}"
+          acr_name="${{ github.event.inputs.acr_name || 'crswcdevnbapi' }}"
+          version="${{ github.event.inputs.version || 'v1.0.0' }}"
+          echo "source_folder=${source_folder}" >> "$GITHUB_OUTPUT"
+          echo "acr_name=${acr_name}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Get ACR login server
+        id: acr
+        shell: bash
+        run: |
+          set -euo pipefail
+          login_server=$(az acr show --name "${{ steps.workflow_inputs.outputs.acr_name }}" --query loginServer -o tsv)
+          if [[ -z "$login_server" ]]; then
+            echo "Failed to resolve ACR login server for ${{ steps.workflow_inputs.outputs.acr_name }}" >&2
+            exit 1
+          fi
+          echo "login_server=${login_server}" >> "$GITHUB_OUTPUT"
+
+      - name: Log in to Azure Container Registry
+        shell: bash
+        run: |
+          set -euo pipefail
+          az acr login --name "${{ steps.workflow_inputs.outputs.acr_name }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ steps.workflow_inputs.outputs.source_folder }}
+          file: ${{ steps.workflow_inputs.outputs.source_folder }}/Dockerfile
+          push: true
+          tags: |
+            ${{ steps.acr.outputs.login_server }}/novabank-api:${{ steps.workflow_inputs.outputs.version }}
+            ${{ steps.acr.outputs.login_server }}/novabank-api:latest

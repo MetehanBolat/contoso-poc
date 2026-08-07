@@ -22,8 +22,8 @@ module "laws" {
   private_endpoints = {
     default = {
       subnet_resource_id          = module.vnet.subnets["subnet0"].resource_id
-      network_interface_name      = "nic1"
-      private_dns_zone_group_name = "dnslinktovnet"
+      network_interface_name      = "${var.log_analytics_workspace_name}-nic"
+      private_dns_zone_group_name = module.pdns-laws.resource.private_dns_zone_group_name
     }
   }
 
