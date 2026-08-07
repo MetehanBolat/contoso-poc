@@ -78,7 +78,7 @@ module "asp" {
   os_type                = "Linux"
   parent_id              = azurerm_resource_group.this.id
   sku_name               = var.app_service_plan_sku_name
-  zone_balancing_enabled = true
+  zone_balancing_enabled = var.environment == "dev" ? false : true
   # Enable this for high availability. Only works on premium tier.
   worker_count = 1
 
