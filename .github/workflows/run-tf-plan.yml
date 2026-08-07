@@ -63,7 +63,10 @@ jobs:
 
       - name: Terraform Init
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform init -backend-config="${{ env.TF_ENVIRONMENT }}/${{ env.TF_ENVIRONMENT }}.tfbackend" -input=false
+        run: |
+          terraform init -backend-config="${{ env.TF_ENVIRONMENT }}/${{ env.TF_ENVIRONMENT }}.tfbackend" -input=false
+          terraform validate
+
 
       - name: Terraform Plan
         working-directory: ${{ env.TF_WORKING_DIR }}
