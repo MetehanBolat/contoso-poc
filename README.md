@@ -17,7 +17,7 @@ flowchart TB
         CI["GitHub Actions\n(OIDC, no static secrets)"]
     end
 
-    subgraph AZ["Azure Subscription — Sweden Central (EU)"]
+    subgraph AZ["Azure Subscription — France Central (EU)"]
         subgraph RG["Environment Resource Group (dev / prod)"]
             subgraph VNET["Virtual Network"]
                 subgraph APPSNET["App Subnet (delegated)"]
@@ -89,7 +89,7 @@ novabank-poc/
 │   │       └── README.md         # Auto-generated (terraform-docs): inputs/outputs/resources
 │   │
 │   └── instances/
-│       └── swc/                  # "Sweden Central" deployable root module
+│       └── frc/                  # "France Central" deployable root module
 │           ├── main.tf               # Instantiates the nb-api module
 │           ├── provider.tf           # Provider + remote state backend config
 │           ├── var.tf                # Instance-level variable declarations
@@ -114,7 +114,7 @@ novabank-poc/
 
 ### Infrastructure design notes
 
-- **Module vs. instance split**: `iac/modules/nb-api` is a self-contained, reusable Terraform module (documented via `terraform-docs` in its own `README.md`). `iac/instances/swc` is the deployable root that wires the module to a specific region/subscription and supplies per-environment `.tfvars` + `.tfbackend` files — so `dev` and `prod` share identical logic but isolated state and sizing.
+- **Module vs. instance split**: `iac/modules/nb-api` is a self-contained, reusable Terraform module (documented via `terraform-docs` in its own `README.md`). `iac/instances/frc` is the deployable root that wires the module to a specific region/subscription and supplies per-environment `.tfvars` + `.tfbackend` files — so `dev` and `prod` share identical logic but isolated state and sizing.
 - **State isolation**: each environment has its own remote state (`*.tfbackend`), preventing a dev change from ever touching prod state.
 - **No click-ops**: every resource is created through `terraform plan`/`apply`, invoked locally or via the GitHub Actions workflows below.
 
@@ -134,15 +134,15 @@ Prerequisites: Terraform `>= 1.15.8, < 2.0.0`, Azure CLI, Docker, and an Azure s
 
 ```powershell
 # 1. Deploy the infrastructure for an environment (dev shown)
-cd iac/instances/swc
+cd iac/instances/frc
 terraform init -backend-config="dev/dev.tfbackend"
 terraform plan  -var-file="dev/dev.tfvars"
 terraform apply -var-file="dev/dev.tfvars"
 
 # 2. Build and push the API image to the environment's ACR
 docker build -t novabank-api:v1.0.0 -f src/api/Dockerfile src/api
-az acr login --name devnbapiswcacr
-docker push devnbapiswcacr.azurecr.io/novabank-api:v1.0.0
+az acr login --name devnbapifrcacr
+docker push devnbapifrcacr.azurecr.io/novabank-api:v1.0.0
 ```
 
 In practice, both steps are automated by the GitHub Actions workflows above once changes land on `main`.
