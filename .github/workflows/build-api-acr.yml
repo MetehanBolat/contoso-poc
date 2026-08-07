@@ -6,7 +6,7 @@ on:
       source_folder:
         description: 'Source folder for the API to build'
         required: true
-        default: './src/api'
+        default: './src/new-api'
         type: string
       acr_name:
         description: 'Azure Container Registry name'
@@ -16,13 +16,13 @@ on:
       version:
         description: 'Docker image version'
         required: true
-        default: 'v1.0.0'
+        default: 'v2.0.0'
         type: string
   push:
     branches:
       - main
     paths:
-      - 'src/api/**'
+      - 'src/new-api/**'
       - '.github/workflows/build-api-acr.yml'
 
 permissions:
@@ -55,9 +55,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          source_folder="${{ github.event.inputs.source_folder || './src/api' }}"
+          source_folder="${{ github.event.inputs.source_folder || './src/new-api' }}"
           acr_name="${{ github.event.inputs.acr_name || 'nb-api-dev-frc-acr' }}"
-          version="${{ github.event.inputs.version || 'v1.0.0' }}"
+          version="${{ github.event.inputs.version || 'v2.0.0' }}"
           echo "source_folder=${source_folder}" >> "$GITHUB_OUTPUT"
           echo "acr_name=${acr_name}" >> "$GITHUB_OUTPUT"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
