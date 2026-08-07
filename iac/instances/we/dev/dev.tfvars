@@ -1,6 +1,6 @@
 environment                  = "dev"
 subscription_id              = "8486ac29-bcbd-4691-9ff6-52a901335eb0"
-location                     = "swedencentral"
+location                     = "westeurope"
 resource_group_name          = "dev-nb-api-weu-rg"
 identity_name                = "dev-nb-api-weu-id"
 log_analytics_workspace_name = "dev-nb-api-weu-laws"

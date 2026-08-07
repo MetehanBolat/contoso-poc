@@ -30,7 +30,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: cn-novabank-poc-${{ github.workflow }}-${{ github.ref }}
+  group: novabank-poc
   cancel-in-progress: false
 
 jobs:
