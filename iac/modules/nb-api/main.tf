@@ -75,7 +75,7 @@ module "asp" {
   enable_telemetry       = false
   location               = azurerm_resource_group.this.location
   name                   = var.app_service_plan_name
-  os_type                = "Windows"
+  os_type                = "Linux"
   parent_id              = azurerm_resource_group.this.id
   sku_name               = var.app_service_plan_sku_name
   zone_balancing_enabled = var.environment == "dev" ? false : true

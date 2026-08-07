@@ -65,7 +65,7 @@
 | <a name="input_postgres_admin_login"></a> [postgres\_admin\_login](#input\_postgres\_admin\_login) | The administrator login for the PostgreSQL Flexible Server. | `string` | `"psqladmin"` | no |
 | <a name="input_postgres_database_name"></a> [postgres\_database\_name](#input\_postgres\_database\_name) | The name of the PostgreSQL database. | `string` | n/a | yes |
 | <a name="input_postgres_server_name"></a> [postgres\_server\_name](#input\_postgres\_server\_name) | The name of the PostgreSQL Flexible Server. | `string` | n/a | yes |
-| <a name="input_postgres_server_sku"></a> [postgres\_server\_sku](#input\_postgres\_server\_sku) | The SKU of the PostgreSQL Flexible Server. | `string` | `"B_Standard_B1ms"` | no |
+| <a name="input_postgres_server_sku"></a> [postgres\_server\_sku](#input\_postgres\_server\_sku) | The SKU of the PostgreSQL Flexible Server. | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | The name of the resource group. | `string` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | A map of tags to assign to the resources. | `map(string)` | `{}` | no |
 | <a name="input_vnet_address_space"></a> [vnet\_address\_space](#input\_vnet\_address\_space) | The address space for the virtual network. | `string` | n/a | yes |
