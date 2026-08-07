@@ -148,13 +148,13 @@ module "app_service" {
     }
   }
 
-  #diagnostic_settings = {
-  #  sendToLogAnalytics = {
-  #    name                           = "sendToLogAnalytics"
-  #    workspace_resource_id          = module.laws.resource.id
-  #    log_analytics_destination_type = "Dedicated"
-  #  }
-  #}
+  diagnostic_settings = {
+    sendToLogAnalytics = {
+      name                           = "sendToLogAnalytics"
+      workspace_resource_id          = module.laws.resource.id
+      log_analytics_destination_type = "Dedicated"
+    }
+  }
 
   tags = merge(local.tags, {
     "service-name" = var.app_service_name
