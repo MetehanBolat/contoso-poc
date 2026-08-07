@@ -27,6 +27,8 @@
 | <a name="module_pdns-acr"></a> [pdns-acr](#module\_pdns-acr) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
 | <a name="module_pdns-kv"></a> [pdns-kv](#module\_pdns-kv) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
 | <a name="module_pdns-laws"></a> [pdns-laws](#module\_pdns-laws) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
+| <a name="module_pdns-laws-ods"></a> [pdns-laws-ods](#module\_pdns-laws-ods) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
+| <a name="module_pdns-laws-oms"></a> [pdns-laws-oms](#module\_pdns-laws-oms) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
 | <a name="module_pdns-psql"></a> [pdns-psql](#module\_pdns-psql) | Azure/avm-res-network-privatednszone/azurerm | 0.3.2 |
 | <a name="module_psql"></a> [psql](#module\_psql) | Azure/avm-res-dbforpostgresql-flexibleserver/azurerm | 0.2.3 |
 | <a name="module_vnet"></a> [vnet](#module\_vnet) | Azure/avm-res-network-virtualnetwork/azurerm | 0.19.0 |
