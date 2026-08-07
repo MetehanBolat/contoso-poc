@@ -23,7 +23,7 @@ module "laws" {
     default = {
       subnet_resource_id          = module.vnet.subnets["subnet0"].resource_id
       network_interface_name      = "${var.log_analytics_workspace_name}-nic"
-      private_dns_zone_group_name = module.pdns-laws.resource.private_dns_zone_group_name
+      private_dns_zone_group_name = "link-${var.vnet_name}-laws"
     }
   }
 

@@ -75,11 +75,12 @@ module "asp" {
   enable_telemetry       = false
   location               = azurerm_resource_group.this.location
   name                   = var.app_service_plan_name
-  os_type                = "Linux"
+  os_type                = "Windows"
   parent_id              = azurerm_resource_group.this.id
   sku_name               = var.app_service_plan_sku_name
-  zone_balancing_enabled = true
-  worker_count           = 1
+  zone_balancing_enabled = var.environment == "dev" ? false : true
+  # Enable this for high availability. Only works on premium tier.
+  worker_count = 1
 
   diagnostic_settings = {
     sendToLogAnalytics = {
@@ -188,13 +189,14 @@ module "psql" {
   administrator_login    = var.postgres_admin_login
   administrator_password = random_password.postgres_admin.result
 
-  public_network_access_enabled = false
+  public_network_access_enabled = var.environment == "dev" ? true : false
   server_version                = 16
   sku_name                      = var.postgres_server_sku
   storage_mb                    = 32768
   auto_grow_enabled             = var.environment == "dev" ? false : true
   high_availability             = var.environment == "dev" ? null : { "mode" : "ZoneRedundant" }
-  zone                          = 1
+  ## %99.99 SLA for zone redundant, %99.9 for single zone.
+  zone = 1
 
   private_endpoints = {
     default = {
