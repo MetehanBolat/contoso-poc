@@ -15,7 +15,7 @@ def _get_database_url() -> str:
     db_name = os.getenv("POSTGRES_DB", "novabank")
     user = os.getenv("POSTGRES_USER", "postgres")
     password = os.getenv("POSTGRES_PASSWORD", "postgres")
-    sslmode = os.getenv("POSTGRES_SSLMODE", "disable")
+    sslmode = os.getenv("POSTGRES_SSLMODE", "require")
     return f"postgresql://{user}:{password}@{host}:{port}/{db_name}?sslmode={sslmode}"
 
 

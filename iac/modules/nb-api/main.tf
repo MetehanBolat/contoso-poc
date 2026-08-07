@@ -129,14 +129,14 @@ module "app_service" {
   }
 
   app_settings = {
-    WEBSITES_PORT                         = "8080"
+    WEBSITES_PORT                         = "8000"
     DOCKER_REGISTRY_SERVER_URL            = "https://${module.acr.login_server}"
     POSTGRES_HOST                         = "${var.postgres_server_name}.postgres.database.azure.com"
     POSTGRES_PORT                         = "5432"
     POSTGRES_DB                           = var.postgres_database_name
     POSTGRES_USER                         = var.postgres_admin_login
     POSTGRES_PASSWORD                     = random_password.postgres_admin.result
-    POSTGRES_SSLMODE                      = "disable"
+    POSTGRES_SSLMODE                      = "require"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.this.instrumentation_key
   }
@@ -144,17 +144,17 @@ module "app_service" {
   connection_strings = {
     postgres = {
       type  = "PostgreSQL"
-      value = "Host=${var.postgres_server_name}.postgres.database.azure.com;Port=5432;Database=${var.postgres_database_name};Username=${var.postgres_admin_login};Password=${random_password.postgres_admin.result};SslMode=Disable"
+      value = "Host=${var.postgres_server_name}.postgres.database.azure.com;Port=5432;Database=${var.postgres_database_name};Username=${var.postgres_admin_login};Password=${random_password.postgres_admin.result};SslMode=Require"
     }
   }
 
-  diagnostic_settings = {
-    sendToLogAnalytics = {
-      name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.laws.resource.id
-      log_analytics_destination_type = "Dedicated"
-    }
-  }
+  #diagnostic_settings = {
+  #  sendToLogAnalytics = {
+  #    name                           = "sendToLogAnalytics"
+  #    workspace_resource_id          = module.laws.resource.id
+  #    log_analytics_destination_type = "Dedicated"
+  #  }
+  #}
 
   tags = merge(local.tags, {
     "service-name" = var.app_service_name
