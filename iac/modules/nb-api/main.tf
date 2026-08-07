@@ -80,7 +80,8 @@ module "asp" {
   sku_name               = var.app_service_plan_sku_name
   zone_balancing_enabled = var.environment == "dev" ? false : true
   # Enable this for high availability. Only works on premium tier.
-  worker_count = 1
+  # Zone balancing requires at least 2 workers (or a multiple of the zone count) to take effect.
+  worker_count = var.environment == "dev" ? 1 : 2
 
   diagnostic_settings = {
     sendToLogAnalytics = {

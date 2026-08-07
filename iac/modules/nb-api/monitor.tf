@@ -10,6 +10,8 @@ module "laws" {
     "service-name" = var.log_analytics_workspace_name
   })
 
+  log_analytics_workspace_retention_in_days = 365
+
   monitor_private_link_scope = {
     pe1 = {
       name        = "law_pl_scope"

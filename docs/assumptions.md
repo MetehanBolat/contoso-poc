@@ -27,7 +27,7 @@ This document lists the assumptions made while designing and building the NovaBa
 
 - **Dev** and **prod** are sufficient as the first two environments; a dedicated **test/staging** tier is not required immediately but is expected to be added later without redesigning the module.
 - NovaBank will operate out of a single Azure subscription for this PoC; multi-subscription governance (management groups, landing zone) is out of scope for this first step.
-- The team accepts **Sweden Central** as the sole deployment region to satisfy EU data residency; multi-region disaster recovery is not required for this first step, provided backups/HA meet the RPO ≤ 1h / RTO ≤ 4h target within-region.
+- The team accepts **France Central** as the sole deployment region to satisfy EU data residency; multi-region disaster recovery is not required for this first step, provided backups/HA meet the RPO ≤ 1h / RTO ≤ 4h target within-region.
 - Central log retention of 365 days in Log Analytics/Application Insights is an acceptable interpretation of the "≥ 12 months" audit requirement, with access restricted via Azure RBAC on the workspace.
 
 ## Identity, Security & Cost
