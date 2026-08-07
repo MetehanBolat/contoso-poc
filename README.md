@@ -106,6 +106,13 @@ novabank-poc/
 │       ├── run-tf-plan.yml       # Terraform plan on PR (OIDC login, no stored secrets)
 │       └── run-tf-apply.yml      # Terraform apply on merge to main
 │
+├── slides/                   # Interview / customer presentation
+│   ├── generate_presentation.py  # Builds the deck (odfpy) — source of truth
+│   ├── generate_diagram.py       # Renders the architecture diagram (matplotlib)
+│   ├── assets/                   # Generated diagram image(s)
+│   ├── novabank-cloud-foundation.odp  # Generated OpenDocument Presentation
+│   └── README.md                 # How to regenerate/present the deck
+│
 ├── .gitignore
 └── README.md                 # You are here
 ```
@@ -155,3 +162,4 @@ In practice, both steps are automated by the GitHub Actions workflows above once
 | [`docs/assumptions.md`](./docs/assumptions.md)                   | Explicit assumptions on application, networking, environments, identity, and cost                            |
 | [`iac/modules/nb-api/README.md`](./iac/modules/nb-api/README.md) | Auto-generated Terraform reference: requirements, providers, resources, inputs, outputs                      |
 | [`src/api/README.md`](./src/api/README.md)                       | Running and building the API locally                                                                         |
+| [`slides/README.md`](./slides/README.md)                         | Interview/customer presentation (`.odp`) and how to regenerate it                                            |
