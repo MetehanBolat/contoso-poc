@@ -1,0 +1,59 @@
+name: "Docs/Code Drift Check"
+run-name: Drift Check (${{ inputs.model || 'anthropic/claude-sonnet-4.5' }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: 'OpenRouter model slug to use'
+        required: false
+        default: 'anthropic/claude-sonnet-4.5'
+
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docs/architecture-summary.md'
+      - 'iac/**'
+      - 'ai/drift_check.py'
+      - '.github/workflows/drift-check.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: drift-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift-check:
+    name: "Run drift check"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r ai/requirements.txt
+
+      - name: Run drift check
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          DRIFT_MODEL: ${{ inputs.model || 'anthropic/claude-sonnet-4.5' }}
+        run: python ai/drift_check.py > drift-report.md
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: drift-report
+          path: drift-report.md
+
+      - name: Add report to job summary
+        if: always()
+        run: cat drift-report.md >> "$GITHUB_STEP_SUMMARY"
