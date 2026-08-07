@@ -7,7 +7,7 @@ on:
       instanceDirectory:
         description: 'Terraform instance directory for nb-api'
         required: true
-        default: './iac/instances/swc'
+        default: './iac/instances/frc'
       environment:
         description: 'Environment (dev/prod)'
         required: true
@@ -22,7 +22,7 @@ env:
   TF_IN_AUTOMATION: true
   TF_INPUT: false
   TF_WARN_OUTPUT_ERRORS: true
-  TF_WORKING_DIR: ${{ inputs.instanceDirectory || './iac/instances/swc'}}
+  TF_WORKING_DIR: ${{ inputs.instanceDirectory || './iac/instances/frc'}}
   TF_ENVIRONMENT: ${{ inputs.environment || 'dev' }}
 
 permissions:
