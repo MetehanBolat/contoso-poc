@@ -1,4 +1,4 @@
-storage_account_name="defaultswc"
+storage_account_name="defaultfrc"
 container_name="tfstate"
 key="prod/nb-api.tfstate"
 resource_group_name="default-rg"
