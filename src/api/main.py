@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+import logging
+import time
 from typing import List
 
 from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel, Field
 
 from database import get_db_connection, initialize_db
+
+logger = logging.getLogger("uvicorn.error")
 
 app = FastAPI(title="NovaBank API", version="1.0.0")
 
@@ -21,7 +25,25 @@ class ItemResponse(BaseModel):
     description: str | None = None
 
 
-initialize_db()
+@app.on_event("startup")
+def on_startup() -> None:
+    # Retry DB initialization briefly instead of crashing the container the
+    # instant the database isn't reachable yet (e.g. cold start, DNS not
+    # propagated, private endpoint still coming up).
+    max_attempts = 5
+    delay_seconds = 3
+    for attempt in range(1, max_attempts + 1):
+        try:
+            initialize_db()
+            logger.info("Database initialized successfully.")
+            return
+        except Exception:  # noqa: BLE001
+            logger.exception(
+                "Database initialization failed (attempt %s/%s).", attempt, max_attempts
+            )
+            if attempt == max_attempts:
+                raise
+            time.sleep(delay_seconds)
 
 
 @app.get("/")

@@ -43,7 +43,7 @@ We recommend **Microsoft Azure**, using a **PaaS-first "modernize-while-moving" 
 - **Virtual network with two subnets** (private-endpoint subnet + delegated app subnet) and an **NSG** keep the database, registry, key vault and log workspace off the public internet in prod; only the App Service exposes an HTTPS endpoint.
 - **Terraform**, structured as a reusable `nb-api` module instantiated per environment (`dev`, `prod`) with separate state backends and `.tfvars`, gives repeatable, reviewable infrastructure changes.
 - **GitHub Actions** (OIDC federated login, no stored cloud secrets) builds/pushes the container image and runs `terraform plan`/`apply` — deployments are triggered from Git, not consoles.
-- Region: **Sweden Central**, an EU Azure region, for data residency.
+- Region: **France Central**, an EU Azure region, for data residency.
 
 This is deliberately a **single-region, PaaS-only** footprint. It is not yet a full landing zone (no Azure Policy, hub-spoke networking, or multi-subscription governance) — that is intentionally deferred; see [Next Steps](#7-next-steps).
 
@@ -56,7 +56,7 @@ flowchart TB
         CI["GitHub Actions\n(OIDC, no static secrets)"]
     end
 
-    subgraph AZ["Azure Subscription — Sweden Central (EU)"]
+    subgraph AZ["Azure Subscription — France Central (EU)"]
         subgraph RG["Environment Resource Group (dev / prod)"]
             subgraph VNET["Virtual Network"]
                 subgraph APPSNET["App Subnet (delegated)"]
@@ -113,7 +113,7 @@ Full assumption list: [`assumptions.md`](./assumptions.md).
 | Risk                                                          | Impact                                                     | Mitigation in this PoC / next step                                                                                                    |
 | ------------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
 | Dev environment has public network access enabled             | Data exposure if real data is used in dev                  | Keep dev seeded with synthetic data only; tighten before any production-like data is used                                             |
-| Single Azure region (Sweden Central)                          | No cross-region disaster recovery                          | RTO ≤ 4h is met via backups/HA within-region for this first step; multi-region DR is a phase-2 decision once volumes justify the cost |
+| Single Azure region (France Central)                          | No cross-region disaster recovery                          | RTO ≤ 4h is met via backups/HA within-region for this first step; multi-region DR is a phase-2 decision once volumes justify the cost |
 | No WAF / Front Door in front of App Service                   | Direct exposure to L7 attacks                              | App Service platform provides TLS + basic protections now; add Azure Front Door/WAF once the API is customer-facing at scale          |
 | Secrets duplicated between App Service settings and Key Vault | Slight redundancy, potential drift                         | Move fully to Key Vault references in App Service settings as a follow-up hardening task                                              |
 | No formal landing zone / policy guardrails                    | Config drift or non-compliant resources possible over time | Introduce Azure Policy + management group structure once a second workload joins the subscription                                     |

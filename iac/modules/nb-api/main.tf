@@ -78,17 +78,18 @@ module "asp" {
   os_type                = "Linux"
   parent_id              = azurerm_resource_group.this.id
   sku_name               = var.app_service_plan_sku_name
-  zone_balancing_enabled = true
+  zone_balancing_enabled = var.environment == "dev" ? false : true
   # Enable this for high availability. Only works on premium tier.
-  worker_count = 1
+  # Zone balancing requires at least 2 workers (or a multiple of the zone count) to take effect.
+  worker_count = var.environment == "dev" ? 1 : 2
 
-  diagnostic_settings = {
-    sendToLogAnalytics = {
-      name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.laws.resource.id
-      log_analytics_destination_type = "Dedicated"
-    }
-  }
+  #diagnostic_settings = {
+  #  sendToLogAnalytics = {
+  #    name                           = "sendToLogAnalytics"
+  #    workspace_resource_id          = module.laws.resource.id
+  #    log_analytics_destination_type = "Dedicated"
+  #  }
+  #}
 
   tags = merge(local.tags, {
     "service-name" = var.app_service_plan_name
@@ -128,14 +129,14 @@ module "app_service" {
   }
 
   app_settings = {
-    WEBSITES_PORT                         = "8080"
+    WEBSITES_PORT                         = "8000"
     DOCKER_REGISTRY_SERVER_URL            = "https://${module.acr.login_server}"
     POSTGRES_HOST                         = "${var.postgres_server_name}.postgres.database.azure.com"
     POSTGRES_PORT                         = "5432"
     POSTGRES_DB                           = var.postgres_database_name
     POSTGRES_USER                         = var.postgres_admin_login
     POSTGRES_PASSWORD                     = random_password.postgres_admin.result
-    POSTGRES_SSLMODE                      = "disable"
+    POSTGRES_SSLMODE                      = "require"
     APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.this.connection_string
     APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.this.instrumentation_key
   }
@@ -143,7 +144,7 @@ module "app_service" {
   connection_strings = {
     postgres = {
       type  = "PostgreSQL"
-      value = "Host=${var.postgres_server_name}.postgres.database.azure.com;Port=5432;Database=${var.postgres_database_name};Username=${var.postgres_admin_login};Password=${random_password.postgres_admin.result};SslMode=Disable"
+      value = "Host=${var.postgres_server_name}.postgres.database.azure.com;Port=5432;Database=${var.postgres_database_name};Username=${var.postgres_admin_login};Password=${random_password.postgres_admin.result};SslMode=Require"
     }
   }
 

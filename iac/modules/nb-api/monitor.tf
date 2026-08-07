@@ -10,6 +10,8 @@ module "laws" {
     "service-name" = var.log_analytics_workspace_name
   })
 
+  log_analytics_workspace_retention_in_days = 365
+
   monitor_private_link_scope = {
     pe1 = {
       name        = "law_pl_scope"
@@ -24,6 +26,11 @@ module "laws" {
       subnet_resource_id          = module.vnet.subnets["subnet0"].resource_id
       network_interface_name      = "${var.log_analytics_workspace_name}-nic"
       private_dns_zone_group_name = "link-${var.vnet_name}-laws"
+      private_dns_zone_resource_ids = [
+        module.pdns-laws.resource_id,
+        module.pdns-laws-ods.resource_id,
+        module.pdns-laws-oms.resource_id,
+      ]
     }
   }
 
@@ -31,6 +38,10 @@ module "laws" {
     log_analytics_contributor_user_assigned_identity = {
       role_definition_id_or_name = "Log Analytics Contributor"
       principal_id               = azurerm_user_assigned_identity.this.principal_id
+    }
+    log_analytics_reader_current_client = {
+      role_definition_id_or_name = "Log Analytics Reader"
+      principal_id               = data.azurerm_client_config.current.object_id
     }
   }
 }
