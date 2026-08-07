@@ -83,13 +83,13 @@ module "asp" {
   # Zone balancing requires at least 2 workers (or a multiple of the zone count) to take effect.
   worker_count = var.environment == "dev" ? 1 : 2
 
-  diagnostic_settings = {
-    sendToLogAnalytics = {
-      name                           = "sendToLogAnalytics"
-      workspace_resource_id          = module.laws.resource.id
-      log_analytics_destination_type = "Dedicated"
-    }
-  }
+  #diagnostic_settings = {
+  #  sendToLogAnalytics = {
+  #    name                           = "sendToLogAnalytics"
+  #    workspace_resource_id          = module.laws.resource.id
+  #    log_analytics_destination_type = "Dedicated"
+  #  }
+  #}
 
   tags = merge(local.tags, {
     "service-name" = var.app_service_plan_name
