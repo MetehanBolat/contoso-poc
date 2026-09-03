@@ -1,4 +1,4 @@
-# NovaBank API
+# Contoso API
 
 A simple FastAPI service backed by PostgreSQL.
 
@@ -13,7 +13,7 @@ A simple FastAPI service backed by PostgreSQL.
 ## Container build
 
 ```bash
-docker build -t novabank-api:latest -f src/api/Dockerfile src/api
+docker build -t contoso-api:latest -f src/api/Dockerfile src/api
 ```
 
 ## Endpoints

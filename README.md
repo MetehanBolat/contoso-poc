@@ -1,6 +1,6 @@
-# NovaBank Cloud Foundation — Proof of Concept
+# Contoso Cloud Foundation — Proof of Concept
 
-A minimal, production-grounded Azure landing for NovaBank's customer portal API: containerized compute, a managed PostgreSQL database, and centralized logging — deployed repeatably via Terraform and GitHub Actions across **dev** and **prod** environments.
+A minimal, production-grounded Azure landing for Contoso's customer portal API: containerized compute, a managed PostgreSQL database, and centralized logging — deployed repeatably via Terraform and GitHub Actions across **dev** and **prod** environments.
 
 > Full business rationale, decisions, and trade-offs: [`docs/architecture-summary.md`](./docs/architecture-summary.md) · Assumptions: [`docs/assumptions.md`](./docs/assumptions.md)
 
@@ -8,12 +8,12 @@ A minimal, production-grounded Azure landing for NovaBank's customer portal API:
 
 ## 1. High-Level Design
 
-NovaBank's current portal runs as a single VM with a co-located PostgreSQL database and file-based logging — no environment separation, no automation, no central audit trail. This repository implements the first cloud step: an Azure PaaS footprint that keeps the same application and database engine, removes manual deployment, and adds centralized, retained logging for audit and incident response.
+Contoso's current portal runs as a single VM with a co-located PostgreSQL database and file-based logging — no environment separation, no automation, no central audit trail. This repository implements the first cloud step: an Azure PaaS footprint that keeps the same application and database engine, removes manual deployment, and adds centralized, retained logging for audit and incident response.
 
 ```mermaid
 flowchart TB
     subgraph GH["GitHub"]
-        REPO[novabank-poc repo]
+        REPO[contoso-poc repo]
         CI["GitHub Actions\n(OIDC, no static secrets)"]
     end
 
@@ -35,7 +35,7 @@ flowchart TB
         ACR[Azure Container Registry]
     end
 
-    USER[NovaBank Customers] -->|HTTPS| APP
+    USER[Contoso Customers] -->|HTTPS| APP
     REPO --> CI
     CI -->|docker push| ACR
     CI -->|terraform apply| RG
@@ -65,14 +65,14 @@ Two environments — **dev** and **prod** — are deployed from the same Terrafo
 ## 2. Repository Structure
 
 ```
-novabank-poc/
+contoso-poc/
 ├── docs/                     # Written deliverables
 │   ├── assignment.md             # Original assessment brief
-│   ├── architecture-summary.md   # Business context, direction, diagram, decisions, 6D alignment
+│   ├── architecture-summary.md   # Business context, direction, diagram, decisions
 │   └── assumptions.md            # Explicit assumptions behind the design
 │
 ├── src/
-│   └── api/                  # NovaBank customer portal API (FastAPI + PostgreSQL)
+│   └── api/                  # Contoso customer portal API (FastAPI + PostgreSQL)
 │       ├── main.py               # API routes (health check, items CRUD)
 │       ├── database.py           # PostgreSQL connection handling
 │       ├── requirements.txt      # Python dependencies
@@ -81,7 +81,7 @@ novabank-poc/
 │
 ├── iac/                      # Infrastructure as Code (Terraform)
 │   ├── modules/
-│   │   └── nb-api/               # Reusable module: RG, VNet/NSG, App Service + Plan,
+│   │   └── cs-api/               # Reusable module: RG, VNet/NSG, App Service + Plan,
 │   │       │                     # ACR, PostgreSQL Flexible Server, Key Vault,
 │   │       │                     # Log Analytics + App Insights, private DNS zones
 │   │       ├── main.tf, network.tf, monitor.tf, private_dns_zones.tf
@@ -90,7 +90,7 @@ novabank-poc/
 │   │
 │   └── instances/
 │       └── frc/                  # "France Central" deployable root module
-│           ├── main.tf               # Instantiates the nb-api module
+│           ├── main.tf               # Instantiates the cs-api module
 │           ├── provider.tf           # Provider + remote state backend config
 │           ├── var.tf                # Instance-level variable declarations
 │           ├── dev/
@@ -110,7 +110,7 @@ novabank-poc/
 │   ├── generate_presentation.py  # Builds the deck (odfpy) — source of truth
 │   ├── generate_diagram.py       # Renders the architecture diagram (matplotlib)
 │   ├── assets/                   # Generated diagram image(s)
-│   ├── novabank-cloud-foundation.odp  # Generated OpenDocument Presentation
+│   ├── contoso-cloud-foundation.odp  # Generated OpenDocument Presentation
 │   └── README.md                 # How to regenerate/present the deck
 │
 ├── .gitignore
@@ -121,7 +121,7 @@ novabank-poc/
 
 ### Infrastructure design notes
 
-- **Module vs. instance split**: `iac/modules/nb-api` is a self-contained, reusable Terraform module (documented via `terraform-docs` in its own `README.md`). `iac/instances/frc` is the deployable root that wires the module to a specific region/subscription and supplies per-environment `.tfvars` + `.tfbackend` files — so `dev` and `prod` share identical logic but isolated state and sizing.
+- **Module vs. instance split**: `iac/modules/cs-api` is a self-contained, reusable Terraform module (documented via `terraform-docs` in its own `README.md`). `iac/instances/frc` is the deployable root that wires the module to a specific region/subscription and supplies per-environment `.tfvars` + `.tfbackend` files — so `dev` and `prod` share identical logic but isolated state and sizing.
 - **State isolation**: each environment has its own remote state (`*.tfbackend`), preventing a dev change from ever touching prod state.
 - **No click-ops**: every resource is created through `terraform plan`/`apply`, invoked locally or via the GitHub Actions workflows below.
 
@@ -147,9 +147,9 @@ terraform plan  -var-file="dev/dev.tfvars"
 terraform apply -var-file="dev/dev.tfvars"
 
 # 2. Build and push the API image to the environment's ACR
-docker build -t novabank-api:v1.0.0 -f src/api/Dockerfile src/api
-az acr login --name devnbapifrcacr
-docker push devnbapifrcacr.azurecr.io/novabank-api:v1.0.0
+docker build -t contoso-api:v1.0.0 -f src/api/Dockerfile src/api
+az acr login --name csapidevfrcacr
+docker push csapidevfrcacr.azurecr.io/contoso-api:v1.0.0
 ```
 
 In practice, both steps are automated by the GitHub Actions workflows above once changes land on `main`.
@@ -158,8 +158,8 @@ In practice, both steps are automated by the GitHub Actions workflows above once
 
 | Document                                                         | Contents                                                                                                     |
 | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| [`docs/architecture-summary.md`](./docs/architecture-summary.md) | Business context, proposed direction, diagram, decisions & trade-offs, risks, 6D model alignment, next steps |
+| [`docs/architecture-summary.md`](./docs/architecture-summary.md) | Business context, proposed direction, diagram, decisions & trade-offs, risks, next steps                     |
 | [`docs/assumptions.md`](./docs/assumptions.md)                   | Explicit assumptions on application, networking, environments, identity, and cost                            |
-| [`iac/modules/nb-api/README.md`](./iac/modules/nb-api/README.md) | Auto-generated Terraform reference: requirements, providers, resources, inputs, outputs                      |
+| [`iac/modules/cs-api/README.md`](./iac/modules/cs-api/README.md) | Auto-generated Terraform reference: requirements, providers, resources, inputs, outputs                      |
 | [`src/api/README.md`](./src/api/README.md)                       | Running and building the API locally                                                                         |
 | [`slides/README.md`](./slides/README.md)                         | Interview/customer presentation (`.odp`) and how to regenerate it                                            |

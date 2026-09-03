@@ -1,5 +1,5 @@
 """
-Renders the NovaBank architecture diagram as a PNG, used as an image on the
+Renders the Contoso architecture diagram as a PNG, used as an image on the
 "Proposed Architecture" slide of the presentation.
 
 Regenerate with:
@@ -68,12 +68,12 @@ ax.set_ylim(0, 8.0)
 ax.axis("off")
 
 # ================= Left column: GitHub + customers =================
-box(ax, (0.35, 6.5), 2.55, 1.05, "GitHub\n\nnovabank-poc repo", fc=LIGHT_GREY, ec=GREY, fontsize=10)
+box(ax, (0.35, 6.5), 2.55, 1.05, "GitHub\n\ncontoso-poc repo", fc=LIGHT_GREY, ec=GREY, fontsize=10)
 box(ax, (0.35, 4.85), 2.55, 1.15, "GitHub Actions\n\nOIDC login\n(no static secrets)",
     fc=WHITE, ec=BLUE, fontsize=9.3, fontcolor=BLUE, fontweight="bold")
 connector(ax, [(1.625, 6.5), (1.625, 6.0)], color=GREY)
 
-box(ax, (0.35, 0.55), 2.55, 1.1, "NovaBank\nCustomers", fc=LIGHT_GREY, ec=GREY, fontsize=10)
+box(ax, (0.35, 0.55), 2.55, 1.1, "Contoso\nCustomers", fc=LIGHT_GREY, ec=GREY, fontsize=10)
 
 # ================= Azure outer region =================
 region(ax, (3.35, 0.35), 10.5, 7.3, "", NAVY, WHITE, NAVY, fontsize=12)

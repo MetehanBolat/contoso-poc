@@ -1,18 +1,18 @@
 """
-Generates the NovaBank Cloud Foundation interview presentation as a native
+Generates the Contoso Cloud Foundation interview presentation as a native
 OpenDocument Presentation (.odp) file, using odfpy.
 
 Why a script instead of a binary checked into git:
   - The deck is fully reproducible and diffable (content lives in Python, not
     inside a zipped binary).
-  - Anyone can regenerate slides/novabank-cloud-foundation.odp after editing
+  - Anyone can regenerate slides/contoso-cloud-foundation.odp after editing
     this file or docs/architecture-summary.md, without opening an editor.
 
 Usage:
     python slides/generate_presentation.py
 
 Output:
-    slides/novabank-cloud-foundation.odp   (opens in LibreOffice Impress,
+    slides/contoso-cloud-foundation.odp   (opens in LibreOffice Impress,
     OpenOffice Impress, and also imports cleanly into PowerPoint/Google Slides)
 """
 
@@ -36,7 +36,7 @@ from odf.presentation import Notes
 
 SLIDES_DIR = Path(__file__).parent
 ASSETS_DIR = SLIDES_DIR / "assets"
-OUTPUT_PATH = SLIDES_DIR / "novabank-cloud-foundation.odp"
+OUTPUT_PATH = SLIDES_DIR / "contoso-cloud-foundation.odp"
 DIAGRAM_PATH = ASSETS_DIR / "architecture-diagram.png"
 
 # ---------------------------------------------------------------------------
@@ -225,7 +225,7 @@ fs_line = add_frame_style(fill_color=BLUE, vertical="top")
 fs_white_card = add_frame_style(fill_color=WHITE, stroke_color=GREY, vertical="top")
 
 
-def footer(page: Page, slide_no: int, total: int, label: str = "NovaBank Cloud Foundation"):
+def footer(page: Page, slide_no: int, total: int, label: str = "Contoso Cloud Foundation"):
     add_textbox(page, 1.0, PAGE_H - 0.9, 16.0, 0.6, [f"{label}"], st_footer, name="ftr")
     add_textbox(page, PAGE_W - 4.0, PAGE_H - 0.9, 3.0, 0.6, [f"{slide_no} / {total}"], st_footer, name="pgn")
 
@@ -241,20 +241,20 @@ TOTAL_SLIDES = 12
 # ===========================================================================
 p1 = new_page("Title")
 add_rect_frame(p1, 0, 0, PAGE_W, PAGE_H, fs_navy_card, name="bg")
-add_textbox(p1, 2.0, 5.0, 24.0, 1.0, ["NOVABANK CLOUD FOUNDATION"], st_kicker, name="kicker")
+add_textbox(p1, 2.0, 5.0, 24.0, 1.0, ["CONTOSO CLOUD FOUNDATION"], st_kicker, name="kicker")
 _kicker_style = add_text_style(color="#7FB2FF", size="15pt", bold=True)
-add_textbox(p1, 2.0, 5.0, 24.0, 1.0, ["NOVABANK CLOUD FOUNDATION"], _kicker_style, name="kicker2")
+add_textbox(p1, 2.0, 5.0, 24.0, 1.0, ["CONTOSO CLOUD FOUNDATION"], _kicker_style, name="kicker2")
 _title_white = add_text_style(color=WHITE, size="38pt", bold=True)
 add_textbox(p1, 2.0, 5.8, 24.0, 2.5, [
     "A pragmatic first step to Azure",
 ], _title_white, name="title")
 _sub_white = add_text_style(color="#C9D6EE", size="16pt")
 add_textbox(p1, 2.0, 7.6, 22.0, 1.0, [
-    "Proof-of-concept, architecture direction & Terraform IaC — prepared for NovaBank's CTO & Head of Engineering",
+    "Proof-of-concept, architecture direction & Terraform IaC — prepared for Contoso's CTO & Head of Engineering",
 ], _sub_white, name="subtitle")
 add_rect_frame(p1, 2.0, 9.0, 4.0, 0.06, fs_line, name="rule")
 _footer_white = add_text_style(color="#8FA0C4", size="11pt")
-add_textbox(p1, 2.0, 13.6, 20.0, 0.8, ["CloudNation Consulting  ·  7 August 2026"], _footer_white, name="presenter")
+add_textbox(p1, 2.0, 13.6, 20.0, 0.8, ["7 August 2026"], _footer_white, name="presenter")
 
 # ===========================================================================
 # Slide 2 — Agenda
@@ -264,7 +264,7 @@ add_textbox(p2, 1.2, 0.7, 20.0, 1.0, ["Agenda"], st_slide_title, name="t")
 divider(p2, 1.25, 1.75, 3.0)
 
 agenda_items = [
-    ("01", "The situation at NovaBank", "Where the portal runs today, and why it matters for a bank"),
+    ("01", "The situation at Contoso", "Where the portal runs today, and why it matters for a bank"),
     ("02", "Why Azure, why PaaS-first", "The direction, and the alternatives we ruled out"),
     ("03", "Architecture walkthrough", "Compute, data, identity, network, observability"),
     ("04", "Infrastructure as Code & CI/CD", "Terraform module design, dev/prod isolation, GitHub Actions"),
@@ -283,11 +283,11 @@ for num, title, desc in agenda_items:
 footer(p2, 2, TOTAL_SLIDES)
 
 # ===========================================================================
-# Slide 3 — The situation at NovaBank (Discover)
+# Slide 3 — The situation at Contoso (Discover)
 # ===========================================================================
 p3 = new_page("Situation")
-add_textbox(p3, 1.2, 0.7, 20.0, 1.0, ["The situation at NovaBank"], st_slide_title, name="t")
-add_textbox(p3, 1.2, 1.5, 22.0, 0.6, ["6D Model — Discover"], st_subtitle, name="s")
+add_textbox(p3, 1.2, 0.7, 20.0, 1.0, ["The situation at Contoso"], st_slide_title, name="t")
+add_textbox(p3, 1.2, 1.5, 22.0, 0.6, ["Discover"], st_subtitle, name="s")
 divider(p3, 1.25, 2.3, 3.0)
 
 add_textbox(p3, 1.2, 2.7, 12.0, 0.6, ["Today"], add_text_style(color=RED, size="15pt", bold=True), name="today_h")
@@ -322,7 +322,7 @@ footer(p3, 3, TOTAL_SLIDES)
 # ===========================================================================
 p4 = new_page("Direction")
 add_textbox(p4, 1.2, 0.7, 20.0, 1.0, ["Why Azure, why PaaS-first"], st_slide_title, name="t")
-add_textbox(p4, 1.2, 1.5, 22.0, 0.6, ["6D Model — Define & Design"], st_subtitle, name="s")
+add_textbox(p4, 1.2, 1.5, 22.0, 0.6, ["Define & Design"], st_subtitle, name="s")
 divider(p4, 1.25, 2.3, 3.0)
 
 add_textbox(p4, 1.2, 2.7, 25.0, 0.9, [
@@ -428,7 +428,7 @@ for name, color, items in env_cols:
     x += w + 0.4
 
 add_textbox(p7, 1.2, 8.2, 25.6, 1.4, [
-    "Same nb-api Terraform module, instantiated per environment with isolated state (.tfbackend) and sizing (.tfvars) — dev and prod share identical logic, never the same blast radius."
+    "Same cs-api Terraform module, instantiated per environment with isolated state (.tfbackend) and sizing (.tfvars) — dev and prod share identical logic, never the same blast radius."
 ], add_text_style(color=NAVY, size="13.5pt", italic=True), name="note")
 footer(p7, 7, TOTAL_SLIDES)
 
@@ -553,7 +553,7 @@ p12 = new_page("Closing")
 add_rect_frame(p12, 0, 0, PAGE_W, PAGE_H, fs_section_bg, name="bg")
 add_textbox(p12, 2.0, 5.6, 24.0, 1.5, ["Questions & discussion"], st_section_title, name="t")
 add_textbox(p12, 2.0, 7.2, 24.0, 1.0, [
-    "docs/architecture-summary.md  ·  docs/assumptions.md  ·  iac/modules/nb-api/README.md"
+    "docs/architecture-summary.md  ·  docs/assumptions.md  ·  iac/modules/cs-api/README.md"
 ], st_section_sub, name="s")
 _thanks_style = add_text_style(color="#8FA0C4", size="13pt", align="center")
 add_textbox(p12, 2.0, 12.8, 24.0, 0.8, ["Thank you"], _thanks_style, name="thanks")

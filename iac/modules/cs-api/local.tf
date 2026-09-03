@@ -1,10 +1,10 @@
 locals {
   tags = merge(var.tags, {
-    instance    = "nb-api"
+    instance    = "cs-api"
     environment = var.environment
     location    = var.location
     managedBy   = "terraform"
-    deployedBy  = "MetehanBolat\\novabank-poc"
+    deployedBy  = "MetehanBolat\\contoso-poc"
   })
 
   postgres_host                = "${var.postgres_server_name}.postgres.database.azure.com"

@@ -1,27 +1,25 @@
-- [NovaBank Cloud Foundation — Architecture Summary](#novabank-cloud-foundation--architecture-summary)
+- [Contoso Cloud Foundation — Architecture Summary](#contoso-cloud-foundation--architecture-summary)
   - [1. Business Context \& Objectives](#1-business-context--objectives)
   - [2. Proposed Direction](#2-proposed-direction)
     - [Architecture Diagram](#architecture-diagram)
   - [3. Key Decisions \& Trade-offs](#3-key-decisions--trade-offs)
   - [4. Assumptions \& Risks](#4-assumptions--risks)
-  - [5. Alignment with CloudNation's 6D Model](#5-alignment-with-cloudnations-6d-model)
-  - [6. Cost Posture](#6-cost-posture)
-  - [7. Next Steps](#7-next-steps)
+  - [5. Cost Posture](#5-cost-posture)
+  - [6. Next Steps](#6-next-steps)
 
 
-# NovaBank Cloud Foundation — Architecture Summary
+# Contoso Cloud Foundation — Architecture Summary
 
-**Prepared for:** NovaBank CTO & Head of Engineering
-**Prepared by:** CloudNation Consulting
+**Prepared for:** Contoso CTO & Head of Engineering  
 **Date:** 7 August 2026
 
 ---
 
 ## 1. Business Context & Objectives
 
-NovaBank runs a customer portal on a single on-premises VM with a local PostgreSQL database and file-based logging. There is no environment separation, no automated deployment, and no central audit trail — a material risk for a regulated financial institution.
+Contoso runs a customer portal on a single on-premises VM with a local PostgreSQL database and file-based logging. There is no environment separation, no automated deployment, and no central audit trail — a material risk for a regulated financial institution.
 
-NovaBank asked CloudNation for a **low-risk first step** into the public cloud that:
+Contoso asked for a **low-risk first step** into the public cloud that:
 
 - Separates **dev** and **prod**, with room to add a third stage (e.g. test/staging) later.
 - Deploys **repeatably**, without click-ops.
@@ -41,18 +39,18 @@ We recommend **Microsoft Azure**, using a **PaaS-first "modernize-while-moving" 
 - **Azure Key Vault** holds database credentials and secrets, accessed via managed identity.
 - **Log Analytics Workspace + Application Insights** (365-day retention) centralize application traces, dependency calls, and resource diagnostic logs — satisfying the ≥ 12-month audit requirement in one place.
 - **Virtual network with two subnets** (private-endpoint subnet + delegated app subnet) and an **NSG** keep the database, registry, key vault and log workspace off the public internet in prod; only the App Service exposes an HTTPS endpoint.
-- **Terraform**, structured as a reusable `nb-api` module instantiated per environment (`dev`, `prod`) with separate state backends and `.tfvars`, gives repeatable, reviewable infrastructure changes.
+- **Terraform**, structured as a reusable `cs-api` module instantiated per environment (`dev`, `prod`) with separate state backends and `.tfvars`, gives repeatable, reviewable infrastructure changes.
 - **GitHub Actions** (OIDC federated login, no stored cloud secrets) builds/pushes the container image and runs `terraform plan`/`apply` — deployments are triggered from Git, not consoles.
 - Region: **France Central**, an EU Azure region, for data residency.
 
-This is deliberately a **single-region, PaaS-only** footprint. It is not yet a full landing zone (no Azure Policy, hub-spoke networking, or multi-subscription governance) — that is intentionally deferred; see [Next Steps](#7-next-steps).
+This is deliberately a **single-region, PaaS-only** footprint. It is not yet a full landing zone (no Azure Policy, hub-spoke networking, or multi-subscription governance) — that is intentionally deferred; see [Next Steps](#6-next-steps).
 
 ### Architecture Diagram
 
 ```mermaid
 flowchart TB
     subgraph GH["GitHub"]
-        REPO[novabank-poc repo]
+        REPO[contoso-poc repo]
         CI["GitHub Actions\n(OIDC, no static secrets)"]
     end
 
@@ -75,7 +73,7 @@ flowchart TB
         ACR[Azure Container Registry]
     end
 
-    USER[NovaBank Customers] -->|HTTPS| APP
+    USER[Contoso Customers] -->|HTTPS| APP
     REPO --> CI
     CI -->|docker push| ACR
     CI -->|terraform apply| RG
@@ -118,23 +116,11 @@ Full assumption list: [`assumptions.md`](./assumptions.md).
 | Secrets duplicated between App Service settings and Key Vault | Slight redundancy, potential drift                         | Move fully to Key Vault references in App Service settings as a follow-up hardening task                                              |
 | No formal landing zone / policy guardrails                    | Config drift or non-compliant resources possible over time | Introduce Azure Policy + management group structure once a second workload joins the subscription                                     |
 
-## 5. Alignment with CloudNation's 6D Model
+## 5. Cost Posture
 
-This engagement covers the first pass of CloudNation's **[6D Model](https://www.cloudnation.nl/en/inspiration/blogs/moving-to-the-cloud-how-to-structure-a-successful-migration)**:
+Both environments use small, right-sized SKUs (App Service `P0v3`, PostgreSQL `B_Standard_B1ms` in dev / `GP_Standard_D2s_v3` in prod) and Premium ACR/Key Vault only where private networking requires it. There is no over-provisioning for scale Contoso does not yet have; the design's cost lever is **tier upgrades**, not architectural rewrites, when volume grows.
 
-| 6D Phase                  | What we did in this assessment                                                                                                                                                                                   |
-| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Discover**              | Reviewed the current single-VM API, on-prem PostgreSQL, file-only logging, and single-environment setup; captured constraints (EU residency, 99.9%/RPO/RTO, ≥12-month audit logs).                               |
-| **Define & Design**       | Chose Azure PaaS over lift-and-shift or Kubernetes; designed the dev/prod split, network/private-endpoint boundary, and centralized logging model documented above.                                              |
-| **Develop**               | Built the Terraform `nb-api` module and per-environment instances; containerized the existing API without a data-model rewrite.                                                                                  |
-| **Deploy**                | Automated deployment via GitHub Actions (OIDC login, image build/push, `terraform plan`/`apply`) — no manual console steps.                                                                                      |
-| **Delivery (continuous)** | Log Analytics + Application Insights give NovaBank the operational visibility to run day-2 operations; cost, HA tier, and network posture are designed to evolve (see Next Steps) rather than being final state. |
-
-## 6. Cost Posture
-
-Both environments use small, right-sized SKUs (App Service `P0v3`, PostgreSQL `B_Standard_B1ms` in dev / `GP_Standard_D2s_v3` in prod) and Premium ACR/Key Vault only where private networking requires it. There is no over-provisioning for scale NovaBank does not yet have; the design's cost lever is **tier upgrades**, not architectural rewrites, when volume grows.
-
-## 7. Next Steps
+## 6. Next Steps
 
 With more time, we would prioritize, in order:
 

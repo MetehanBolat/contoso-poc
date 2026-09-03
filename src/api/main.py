@@ -11,7 +11,7 @@ from database import get_db_connection, initialize_db
 
 logger = logging.getLogger("uvicorn.error")
 
-app = FastAPI(title="NovaBank API", version="1.0.0")
+app = FastAPI(title="Contoso API", version="1.0.0")
 
 
 class ItemCreate(BaseModel):
@@ -48,7 +48,7 @@ def on_startup() -> None:
 
 @app.get("/")
 def root() -> dict[str, str]:
-    return {"message": "NovaBank API is running"}
+    return {"message": "Contoso API is running"}
 
 
 @app.get("/health")

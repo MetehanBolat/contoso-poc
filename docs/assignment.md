@@ -1,140 +1,113 @@
-# CloudNation – Consultant Assessment (Cloud & AI)
-**Last update:** 14 November 2025
+# Contoso Cloud Migration Brief
 
+**To:** Senior Cloud Architect  
+**From:** Contoso CTO & Head of Engineering  
+**Date:** 14 November 2025  
+**Subject:** First step to the public cloud for our customer portal API
 
-```
-      @@@@@@@@@@        @@@@@@@@@@          @@@@@@@  @@@@       @@@@@@@    @@@   @@@@ @@@@@@@@@
-   @@@@@@@@@@@@@          @@@@@@@@        @@@@@ @@@  @@@@      @@@@ @@@@@  @@@   @@@@ @@@@@@@@@@
-  @@@@@@@@@@@@@@            @@@@@@        @@@        @@@@     @@@@    @@@  @@@   @@@@ @@@@   @@@@
-@@@@@@@@@@@@@@@@              @@@@        @@@@   @@  @@@@     @@@@   @@@@  @@@@  @@@@ @@@@  @@@@@
-@@@@@@@@@@@@@@@                 @@         @@@@@@@@@ @@@@@@@@@ @@@@@@@@@   @@@@@@@@@  @@@@@@@@@@
-@@@@@@@@@                                     @@@     @@@@@@@     @@@@        @@@@     @@@@@
-@@@@@@@@@                                  @@    @@@      @@@    @@@@@@@@   @@      @@@@      @@    @@@
-@@@@@@@@@@@@@@@        @@@                @@@@@  @@@     @@@@@   @@@@@@@@@ @@@@  @@@@@@@@@@  @@@@@  @@@
-@@@@@@@@@@@@@@@@       @@@@@              @@@@@@ @@@    @@@@@@@    @@@@    @@@@  @@@@  @@@@@ @@@@@@ @@@
-  @@@@@@@@@@@@@@       @@@@@@@            @@@@@@@@@@   @@@@ @@@    @@@@    @@@@ @@@@    @@@@ @@@@@@@@@@
-   @@@@@@@@@@@@@       @@@@@@@@@          @@@@ @@@@@  @@@@@@@@@@   @@@@    @@@@  @@@@  @@@@  @@@@ @@@@@
-      @@@@@@@@@@       @@@@@@@@@@@        @@@@  @@@@  @@@@   @@@@  @@@@    @@@@   @@@@@@@@   @@@@  @@@@
+---
 
-```
+## 1. Who we are and what we are trying to solve
 
-## 1. Purpose
+Contoso runs a small customer portal API on a single on-premises VM. The database is a co-located PostgreSQL instance, logs are written to local files only, and there is no meaningful separation between development and production. Deployments are manual.
 
-At CloudNation, we help organizations accelerate with **public cloud** and **AI**. We combine deep technical expertise with a no‑nonsense, people‑first mindset. This first‑stage assessment evaluates how you think and operate as a **consultant** — not just how you build.
+We are a regulated business with EU data residency requirements. Our leadership has approved a first, low-risk move to the public cloud and wants a pragmatic proposal that can be demonstrated end to end.
 
-We want to see how you:
+### Current state
 
-- Assess a customer situation and the surrounding playing field (stakeholders, risks, constraints).
-- Propose a sensible **cloud direction** without over‑engineering.
-- Use **Infrastructure as Code (IaC)** pragmatically and repeatably.
-- Communicate clearly (concise documentation + presentation).
-- Use **AI** in a practical, cloud‑related way that genuinely helps.
+- **Compute:** one VM running the customer portal API.
+- **Data:** PostgreSQL running on the same VM.
+- **Logging:** local files only — no central audit or incident trail.
+- **Environments:** a single live environment; no dev/prod separation.
+- **Deployment:** manual, console-based steps.
 
-Please keep solutions simple. We value **good decisions, explicit trade‑offs, and working demos** over scope and polish.
+### Constraints and targets
 
-## 2. CloudNation’s 6D Model (reference only)
+- **Regulated industry (financial services)**; data must stay in the **EU**.
+- **Availability target:** ≥ 99.9%.
+- **Recovery targets:** RPO ≤ 1 hour, RTO ≤ 4 hours.
+- **Auditability:** application and infrastructure logs retained centrally for ≥ 12 months, with access restricted to authorized roles.
+- **Cost:** choices must be defensible to leadership; no over-engineering.
 
-CloudNation uses a 6D Delivery Model to structure cloud journeys. For this assessment, **do not restate the full model**. Where relevant, reference how your approach aligns with the 6D model and **include a link** to it in your management summary:
+## 2. What we need from the first step
 
-> 6D reference link: **[CloudNation 6D Model](https://www.cloudnation.nl/en/inspiration/blogs/moving-to-the-cloud-how-to-structure-a-successful-migration)**
+We want a working proof-of-concept that proves the cloud direction is sound, not a production system. The first step should deliver:
 
-## 3. Case — NovaBank
+- At least **dev** and **prod** environments in the cloud (**Azure or AWS** — you choose and justify).
+- **Repeatable, automated deployments** with no console click-ops.
+- **Central logging** for application behaviour and infrastructure events, retained long enough to satisfy audit requirements.
+- A **simple, clean footprint** — no Kubernetes, no multi-region active-active, no service mesh at this stage.
+- A clear **cost and scaling rationale** that leadership can understand and defend.
 
-**NovaBank** is a digital bank running a small customer portal on‑premises. They want to move to the **public cloud** and are evaluating CloudNation for a low‑risk, future‑proof start. CloudNation has been invited to propose the first step.
+> Keep the solution open and reasonable. Choose cloud services and patterns that fit the constraints above, and focus on explaining **why** your direction makes sense rather than listing every possible component.
 
-#### Current situation
+## 3. Deliverables
 
-- A small **web API** on a single VM.
-- A **PostgreSQL** database on‑premises.
-- **Logs** written to local files only.
-- **One environment** — no real separation between development, test and production.
+### 3.1 Management summary (max 3 pages)
 
-#### Business & compliance context
+A concise document — readable by non-technical leadership — covering:
 
-- **Regulated industry (financial services)**; **data residency: EU**.
-- Baseline targets: availability ≥ **99.9%**, **RPO ≤ 1 hour**, **RTO ≤ 4 hours**.
-- **Auditability**: application and infrastructure logs retained centrally for **≥ 12 months** with restricted access.
+- Business context and objectives
+- Proposed cloud direction, with one simple architecture diagram
+- Key decisions, explicit trade-offs, assumptions, and risks
+- Cost posture and scaling path
 
-#### What NovaBank wants from the first step
+### 3.2 Cloud proof-of-concept
 
-- At least **dev** and **prod** in the cloud (**Azure or AWS** — you choose).
-- Repeatable, automated deployments (no click‑ops).
-- Central logging for application behaviour and incident investigation.
-- A simple, clean starting point (avoid complex platforms at this stage).
-- Cost awareness and choices that leadership can defend.
+A minimal, working deployment in the chosen cloud using **Infrastructure as Code**:
 
-> **Important:** We deliberately keep the solution open. Choose reasonable cloud services and patterns that fit the case and constraints. Focus on explaining **why** your direction makes sense rather than listing every component.
+- One API or function
+- A basic managed data store
+- Central logging / observability
+- Clear, repeatable deployment steps (CLI script or a small CI example)
 
-## 4. Your role
+### 3.3 Presentation (15–20 minutes + short demo)
 
-You step in as a **consultant**. Understand the landscape, balance trade‑offs, and guide the customer to a pragmatic first step while demonstrating hands‑on capability.
+Present the direction and the PoC to Contoso's CTO and Head of Engineering. Include:
 
-You will:
+- The situation and why the proposed direction fits
+- A walkthrough of the architecture
+- Live demo: deploy or call the PoC and show the logs
+- Trade-offs, risks, and next steps
 
-- Propose a **simple, defensible cloud direction** for NovaBank (Azure or AWS).
-- Build a **small proof‑of‑concept** in the cloud using **IaC** to illustrate that direction.
-- Use **AI** to help your workflow (review, explain, or extract insight).
-- **Present** your approach and recommendations clearly and concisely.
+### 3.4 Practical use of AI
 
-## 5. Scope & deliverables
+Show where an LLM genuinely helps in a cloud/IaC workflow. Minimal working examples are fine — the point is to demonstrate how context is fed to a model and how the response is used. Examples:
 
-We don’t expect a production‑grade system. Pick an achievable slice that demonstrates good judgement.
+- **AI IaC reviewer:** flag missing tags, unintentional public endpoints, or diagnostic gaps before apply.
+- **AI architecture explainer:** turn the technical design into a one-page, non-technical rationale.
+- **AI log insights helper:** summarize app/infra logs and suggest likely next diagnostic steps.
 
-#### Deliverables
+## 4. What good looks like
 
-1. **Management summary** (max 3 pages)
-   - Business context and objectives
-   - Proposed direction (one simple diagram is enough)
-   - Key decisions & trade‑offs, **assumptions**, **risks**
-   - **Link** to CloudNation’s 6D model (no need to restate it)
+We expect a senior architect to show:
 
-2. **Cloud proof‑of‑concept**
-   - Minimal deployment in the chosen cloud using **IaC**
-   - One API/function, a basic data store, and **central logging**
-   - Clear, repeatable deployment (CLI scripts or a small CI example)
+- **Consultative thinking:** stakeholders, constraints, trade-offs, and risks are treated as first-class inputs.
+- **Clear cloud direction:** a defensible choice of cloud provider and services, with a business justification.
+- **Clean, reproducible engineering:** IaC that can be reviewed, re-run, and extended; no one-off manual steps.
+- **Practical AI use:** not a buzzword, but a tool that saves time or improves quality in a specific step.
+- **Honest communication:** scope cuts are explicit, with a clear statement of what would come next with more time.
 
-3. **Presentation** (15–20 minutes + short demo)
-   - Explain your direction; show the PoC; outline next steps
-   - Assume the audience is NovaBank’s CTO and Head of Engineering
+## 5. Suggested repository structure
 
-#### AI component examples
-
-- **AI IaC Reviewer** — flag missing tags, public endpoints, lack of diagnostics, etc.
-- **AI Architecture Explainer** — generate a one‑page, non‑technical rationale for leadership.
-- **AI Log Insights Helper** — summarise app/infra logs and suggest likely next steps.
-
-> Minimal working examples are fine. Show how you would feed context to an LLM and use the response.
-
-## 6. How we assess
-
-- **Consultative thinking**: stakeholders, constraints, trade‑offs.
-- Clarity of cloud direction and its business justification.
-- Use of IaC and clean, reproducible engineering.
-- Practical use of AI (not just a buzzword).
-- Communication: concise docs and a confident, honest presentation.
-
-> If you have to cut scope due to time, be explicit and state what you would do next with more time.
-
-## 7. Submission guidelines (repo structure)
-
-Please submit a Git repository with at least:
+Submit a Git repository with at least:
 
 ```
 /docs/
-  architecture-summary.pdf   # or .md — includes business context, proposed direction, diagram, assumptions, risks, and 6D link
+  architecture-summary.md    # management summary: context, direction, diagram, assumptions, risks
   assumptions.md
-  timelog.md                 # rough overview of time spent per part
-/iac/                        # your Bicep / Terraform / CDK code
-/ai/                         # your AI helper + short README
-/demo/README.md              # how to deploy and test the PoC (commands, prerequisites, expected outcome)
-/slides/                     # optional: presentation PDF
+  timelog.md                 # rough time breakdown per part
+/iac/                        # Bicep / Terraform / CDK code
+/ai/                         # AI helper + short README
+/demo/README.md              # how to deploy and test the PoC
+/slides/                     # optional presentation
 ```
 
-## 8. Practical notes
+## 6. Practical notes
 
-- You may make **assumptions** — just list them in `/docs/assumptions.md`.
-- Keep costs reasonable (small SKUs, autoscaling where applicable, no over‑engineering).
-- Keep the **solution specific to the business case**, but avoid locking into a single tooling stack unless justified.
-- Slides are optional but recommended.
+- List any assumptions in `/docs/assumptions.md`.
+- Keep costs reasonable: small SKUs, autoscaling where applicable, no over-engineering.
+- Keep the solution specific to the business case, but avoid locking into a single tooling stack unless justified.
+- Slides are optional but strongly recommended.
 
-Good luck — we’re looking forward to your approach!
+If scope has to be cut due to time, be explicit about what is deferred and what you would do next.
