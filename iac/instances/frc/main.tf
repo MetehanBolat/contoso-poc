@@ -1,6 +1,6 @@
-module "nb-api" {
+module "cs-api" {
 
-  source = "../../modules/nb-api"
+  source = "../../modules/cs-api"
 
   location    = var.location
   environment = var.environment

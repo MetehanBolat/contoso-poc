@@ -11,7 +11,7 @@ on:
       acr_name:
         description: 'Azure Container Registry name'
         required: true
-        default: 'nbapidevfrcacr'
+        default: 'csapidevfrcacr'
         type: string
       version:
         description: 'Docker image version'
@@ -56,7 +56,7 @@ jobs:
         run: |
           set -euo pipefail
           source_folder="${{ github.event.inputs.source_folder || './src/new-api' }}"
-          acr_name="${{ github.event.inputs.acr_name || 'nb-api-dev-frc-acr' }}"
+          acr_name="${{ github.event.inputs.acr_name || 'csapidevfrcacr' }}"
           version="${{ github.event.inputs.version || 'v2.0.0' }}"
           echo "source_folder=${source_folder}" >> "$GITHUB_OUTPUT"
           echo "acr_name=${acr_name}" >> "$GITHUB_OUTPUT"
@@ -90,5 +90,5 @@ jobs:
           file: ${{ steps.workflow_inputs.outputs.source_folder }}/Dockerfile
           push: true
           tags: |
-            ${{ steps.acr.outputs.login_server }}/novabank-api:${{ steps.workflow_inputs.outputs.version }}
-            ${{ steps.acr.outputs.login_server }}/novabank-api:latest
+            ${{ steps.acr.outputs.login_server }}/contoso-api:${{ steps.workflow_inputs.outputs.version }}
+            ${{ steps.acr.outputs.login_server }}/contoso-api:latest

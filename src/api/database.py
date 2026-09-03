@@ -12,7 +12,7 @@ def _get_database_url() -> str:
 
     host = os.getenv("POSTGRES_HOST", "localhost")
     port = os.getenv("POSTGRES_PORT", "5432")
-    db_name = os.getenv("POSTGRES_DB", "novabank")
+    db_name = os.getenv("POSTGRES_DB", "contoso")
     user = os.getenv("POSTGRES_USER", "postgres")
     password = os.getenv("POSTGRES_PASSWORD", "postgres")
     sslmode = os.getenv("POSTGRES_SSLMODE", "require")

@@ -24,37 +24,37 @@ variable "location" {
 variable "resource_group_name" {
   description = "The name of the resource group."
   type        = string
-  #default     = "novabank-rg"
+  #default     = "contoso-rg"
 }
 
 variable "identity_name" {
   description = "The name of the user-assigned managed identity."
   type        = string
-  #default     = "novabank-id"
+  #default     = "contoso-id"
 }
 
 variable "log_analytics_workspace_name" {
   description = "The name of the Log Analytics workspace."
   type        = string
-  #default     = "novabank-laws"
+  #default     = "contoso-laws"
 }
 
 variable "application_insights_name" {
   description = "The name of the Azure Application Insights resource."
   type        = string
-  #default     = "novabank-ai"
+  #default     = "contoso-ai"
 }
 
 variable "nsg_name" {
   description = "The name of the network security group."
   type        = string
-  #default     = "novabank-nsg"
+  #default     = "contoso-nsg"
 }
 
 variable "vnet_name" {
   description = "The name of the virtual network."
   type        = string
-  #default     = "novabank-vnet"
+  #default     = "contoso-vnet"
 }
 
 variable "vnet_address_space" {
@@ -66,7 +66,7 @@ variable "vnet_address_space" {
 variable "pe_subnet_name" {
   description = "The name of the private endpoint subnet."
   type        = string
-  #default     = "novabank-pe-subnet"
+  #default     = "contoso-pe-subnet"
 }
 
 variable "pe_subnet_address_space" {
@@ -78,7 +78,7 @@ variable "pe_subnet_address_space" {
 variable "app_subnet_name" {
   description = "The name of the application subnet."
   type        = string
-  #default     = "novabank-app-subnet"
+  #default     = "contoso-app-subnet"
 }
 
 variable "app_subnet_address_space" {
@@ -123,7 +123,7 @@ variable "container_registry_sku" {
 variable "key_vault_name" {
   description = "The name of the Key Vault."
   type        = string
-  #default     = "novabank-kv"
+  #default     = "contoso-kv"
 }
 
 variable "postgres_server_name" {

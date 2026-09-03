@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       instanceDirectory:
-        description: 'Terraform instance directory for nb-api'
+        description: 'Terraform instance directory for cs-api'
         required: true
         default: './iac/instances/frc'
       environment:
@@ -33,7 +33,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: novabank-poc
+  group: contoso-poc
   cancel-in-progress: false
 
 jobs:

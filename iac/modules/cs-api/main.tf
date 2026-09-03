@@ -5,7 +5,7 @@ resource "azurerm_resource_group" "this" {
   location = var.location
 
   tags = merge(local.tags, {
-    "service-name" = "novabank-api"
+    "service-name" = "cs-api"
   })
 }
 

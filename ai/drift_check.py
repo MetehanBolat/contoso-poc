@@ -25,7 +25,7 @@ IAC_DIR = REPO_ROOT / "iac"
 MODEL = os.environ.get("DRIFT_MODEL", "anthropic/claude-sonnet-4.5")
 
 PROMPT_TEMPLATE = """\
-You are reviewing a consulting deliverable for NovaBank, a regulated EU bank
+You are reviewing a consulting deliverable for Contoso, a regulated EU business
 migrating to Azure. Below is the management summary that was delivered to the
 client, followed by the Terraform code that actually deploys the environment.
 
