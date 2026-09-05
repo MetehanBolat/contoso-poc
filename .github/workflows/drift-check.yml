@@ -9,14 +9,14 @@ on:
         required: false
         default: 'anthropic/claude-sonnet-4.5'
 
-  pull_request:
-    branches:
-      - main
-    paths:
-      - 'docs/architecture-summary.md'
-      - 'iac/**'
-      - 'ai/drift_check.py'
-      - '.github/workflows/drift-check.yml'
+  #pull_request:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'docs/architecture-summary.md'
+  #    - 'iac/**'
+  #    - 'ai/drift_check.py'
+  #    - '.github/workflows/drift-check.yml'
 
 permissions:
   contents: read

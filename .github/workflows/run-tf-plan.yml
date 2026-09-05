@@ -13,13 +13,13 @@ on:
         required: true
         default: 'dev'
 
-  pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - synchronize
-      - reopened
+  #pull_request:
+  #  branches:
+  #    - main
+  #  types:
+  #    - opened
+  #    - synchronize
+  #    - reopened
 
 env:
   TF_IN_AUTOMATION: true

@@ -13,9 +13,9 @@ on:
         required: true
         default: 'dev'
 
-  push:
-    branches:
-      - main
+  #push:
+  #  branches:
+  #    - main
 
 
 env:

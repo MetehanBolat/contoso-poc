@@ -113,6 +113,20 @@ contoso-poc/
 │   ├── contoso-cloud-foundation.odp  # Generated OpenDocument Presentation
 │   └── README.md                 # How to regenerate/present the deck
 │
+├── helm/                   # Kubernetes Helm chart (local dev + reusable)
+│   └── contoso/                # API + HA PostgreSQL (bitnami/postgresql-ha)
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       ├── values-minikube.yaml
+│       ├── README.md
+│       └── templates/
+│
+├── scripts/                # Local helper scripts
+│   ├── build-and-push.ps1      # Docker build & push to Docker Hub
+│   ├── build-and-push.sh
+│   ├── helm-install-local.ps1  # Install chart on minikube
+│   └── helm-install-local.sh
+│
 ├── .gitignore
 └── README.md                 # You are here
 ```
@@ -152,6 +166,25 @@ az acr login --name csapidevfrcacr
 docker push csapidevfrcacr.azurecr.io/contoso-api:v1.0.0
 ```
 
+### Local Kubernetes with Helm
+
+For local development on minikube, use the Helm chart in `helm/contoso`:
+
+```powershell
+# 1. Build and push the API image to Docker Hub
+$env:DOCKERHUB_USERNAME = "your-dockerhub-username"
+.\scripts\build-and-push.ps1 -Version "v2.0.0"
+
+# 2. Install the chart (API + HA PostgreSQL) on minikube
+$env:POSTGRES_PASSWORD = "change-me"
+.\scripts\helm-install-local.ps1 -Version "v2.0.0"
+
+# 3. Access the API
+minikube service contoso-api -n contoso-local
+```
+
+See [`helm/contoso/README.md`](./helm/contoso/README.md) for details.
+
 In practice, both steps are automated by the GitHub Actions workflows above once changes land on `main`.
 
 ## 4. Documentation Index
@@ -162,4 +195,5 @@ In practice, both steps are automated by the GitHub Actions workflows above once
 | [`docs/assumptions.md`](./docs/assumptions.md)                   | Explicit assumptions on application, networking, environments, identity, and cost                            |
 | [`iac/modules/cs-api/README.md`](./iac/modules/cs-api/README.md) | Auto-generated Terraform reference: requirements, providers, resources, inputs, outputs                      |
 | [`src/api/README.md`](./src/api/README.md)                       | Running and building the API locally                                                                         |
+| [`helm/contoso/README.md`](./helm/contoso/README.md)             | Local Kubernetes deployment with Helm (API + HA PostgreSQL)                                                  |
 | [`slides/README.md`](./slides/README.md)                         | Interview/customer presentation (`.odp`) and how to regenerate it                                            |

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: contoso
+description: Helm chart for the Contoso API and HA PostgreSQL local/dev environment
+type: application
+version: 0.1.0
+appVersion: "2.0.0"
+dependencies:
+  - name: postgresql-ha
+    version: 16.3.2
+    repository: https://charts.bitnami.com/bitnami
+    condition: postgresql-ha.enabled
