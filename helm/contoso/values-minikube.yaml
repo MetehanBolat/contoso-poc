@@ -1,0 +1,55 @@
+# Minikube-specific overrides for the Contoso chart.
+# Use this file with:
+#   helm install contoso ./helm/contoso -n contoso-local --create-namespace -f ./helm/contoso/values-minikube.yaml
+
+image:
+  # Replace <DOCKERHUB_USERNAME> with your Docker Hub username, or use a locally loaded image name.
+  repository: docker.io/__DOCKERHUB_USERNAME__/contoso-api
+  tag: __API_TAG__
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8000
+  nodePort: 30080
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+postgresql:
+  host: "postgres-pgpool"
+  port: 5432
+  database: contoso
+  username: postgres
+  sslmode: disable
+
+# Shared with the postgresql-ha subchart.
+global:
+  postgresql:
+    password: change-me
+    repmgrPassword: change-me
+  pgpool:
+    adminPassword: change-me
+
+postgresql-ha:
+  enabled: true
+  fullnameOverride: postgres
+  postgresql:
+    replicaCount: 2
+    database: contoso
+    username: postgres
+    persistence:
+      enabled: true
+      size: 5Gi
+    initdbScripts:
+      init.sql: |
+        CREATE TABLE IF NOT EXISTS app_log (
+            id SERIAL PRIMARY KEY,
+            message VARCHAR(200),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        INSERT INTO app_log (message) VALUES ('Application initialized');
+  pgpool:
+    replicaCount: 1

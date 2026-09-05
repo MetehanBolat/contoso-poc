@@ -1,0 +1,111 @@
+# Default values for the Contoso API + HA PostgreSQL Helm chart.
+
+# -- Number of API pod replicas. The HPA will keep at least this many when autoscaling is enabled.
+replicaCount: 2
+
+image:
+  # -- Docker repository for the API image. Use a local name or a public registry like docker.io/myuser/contoso-api.
+  repository: contoso-api
+  # -- Image pull policy.
+  pullPolicy: IfNotPresent
+  # -- Image tag. Defaults to the chart appVersion if empty.
+  tag: ""
+  # -- Optional image pull secrets for private registries.
+  pullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: NodePort
+  port: 8000
+  nodePort: 30080
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+minReadySeconds: 10
+
+rollingUpdate:
+  maxSurge: 1
+  maxUnavailable: 0
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+probes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 10
+    periodSeconds: 10
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+# API database connection settings.
+# The host should match the Pgpool-II service created by the postgresql-ha subchart.
+# With postgresql-ha.fullnameOverride="postgres" the service name is "postgres-pgpool".
+postgresql:
+  host: "postgres-pgpool"
+  port: 5432
+  database: contoso
+  username: postgres
+  sslmode: disable
+
+# Global values are shared with the postgresql-ha subchart.
+# Change the passwords before installing.
+global:
+  postgresql:
+    password: change-me
+    repmgrPassword: change-me
+  pgpool:
+    adminPassword: change-me
+
+# Bitnami PostgreSQL HA subchart configuration.
+postgresql-ha:
+  enabled: true
+  fullnameOverride: postgres
+  postgresql:
+    replicaCount: 2
+    database: contoso
+    username: postgres
+    persistence:
+      enabled: true
+      size: 5Gi
+    initdbScripts:
+      init.sql: |
+        CREATE TABLE IF NOT EXISTS app_log (
+            id SERIAL PRIMARY KEY,
+            message VARCHAR(200),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        INSERT INTO app_log (message) VALUES ('Application initialized');
+  pgpool:
+    replicaCount: 1
