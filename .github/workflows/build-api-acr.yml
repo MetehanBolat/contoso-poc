@@ -18,12 +18,12 @@ on:
         required: true
         default: 'v2.0.0'
         type: string
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/new-api/**'
-      - '.github/workflows/build-api-acr.yml'
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'src/new-api/**'
+  #    - '.github/workflows/build-api-acr.yml'
 
 permissions:
   id-token: write
